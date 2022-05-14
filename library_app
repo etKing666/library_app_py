@@ -1,0 +1,191 @@
+# Starting dataset:
+book_list = [[1, '1984', 'George Orwell', 2002], [2, 'The Unbearable Lightness of Being', 'Milan Kundera', 1995], \
+[3, 'Pride and Prejudice', 'Jane Austen', 1990]]
+
+def menu(): 
+    # Used try/except in order to ensure that the user enters a valid input (1-9, integer)
+    try: 
+        user_input = int(input("""Please make your choice (1..9) and hit enter:\n
+        1. List the books in the inventory (sorted by inventory number)\n
+        2. List the books in the inventory (sorted by book name)\n
+        3. List the books in the inventory (sorted by author name)\n
+        4. Add a new book to the inventory\n
+        5. Search for a book by book name\n
+        6. Search for books by an author\n
+        7. Delete a book from the inventory\n
+        8. Display the total number of books in the inventory\n
+        9. Quit the application\n
+        Your choice: """))
+    except:
+        clear()
+        menu()
+
+    def choice(user_choice):
+        # This local function enables us to ask the user for a new input and reconsider the user's choice in case of a invalid input
+        if user_choice == 1:
+            list_books(book_list)
+        elif user_choice == 2:
+            sort_books1(book_list)
+        elif user_choice == 3:
+            sort_books2(book_list)
+        elif user_choice == 4:
+            new_record()
+        elif user_choice == 5:
+            search_book(book_list)
+        elif user_choice == 6:
+            search_author(book_list)
+        elif user_choice == 7:
+            delete_record()
+        elif user_choice == 8:
+            total_books(book_list)
+        elif user_choice == 9:
+            print("\nThank you for using Library Inventory application!\n")
+            exit()
+        else: 
+            user_choice = int(input("Please make a valid choice: "))
+            choice(user_choice)
+            
+    choice(user_input)
+
+
+def list_books(books):
+    books.sort() # We are sorting the list by the first column (inventory number)
+    # Prints a new line to separate the list from the prevous text and then the headers
+    print(f"\n{'Inv.No.' : ^4}\t\t{'Book Name' : <40}\t\t{'Author' : <20}\t\t{'Year of Pub.' : ^12}\t\t")
+    length = len(books)
+    # A for loop is used to print the list to the screen in correct format
+    for i in range(length):
+        print(f"{books[i][0] : ^4}\t\t{books[i][1] : <40}\t\t{books[i][2] : <20}\t\t{books[i][3] : ^12}\t\t")
+    print("")
+    return_menu()
+
+def sort_books1(books): # We are passing the list as a parameter because we do not want to  make a change on the original list (book_List)
+    books.sort(key=lambda x: x[1]) # We are using a lambda function to sort the list by the second column (e.g. book name)
+    print(f"\n{'Inv.No.' : ^4}\t\t{'Book Name' : <40}\t\t{'Author' : <20}\t\t{'Year of Pub.' : ^12}\t\t")
+    length = len(books)
+    for i in range(length):
+        print(f"{books[i][0] : ^4}\t\t{books[i][1] : <40}\t\t{books[i][2] : <20}\t\t{books[i][3] : ^12}\t\t")
+    print("")
+    return_menu()
+    
+
+def sort_books2(books):
+    books.sort(key=lambda x: x[2]) 
+    print(f"\n{'Inv.No.' : ^4}\t\t{'Book Name' : <40}\t\t{'Author' : <20}\t\t{'Year of Pub.' : ^12}\t\t")
+    length = len(books)
+    for i in range(length):
+        print(f"{books[i][0] : ^4}\t\t{books[i][1] : <40}\t\t{books[i][2] : <20}\t\t{books[i][3] : ^12}\t\t")
+    print("")
+    return_menu()
+
+def new_record():
+    # Adds a new record to the inventory
+    def another():
+        # Local function to add another record
+        question = input("Do you want to add another record? (Y/N)\n")
+        if question.upper() != "Y" and question.upper() != "N": #Changing it both to uppercase to make sure it accepts Y or N regardless of how it is entered
+            print("Please enter a valid input.")
+            another()
+        elif question.upper() == "Y":
+            new_record()
+        else:
+            return_menu()
+    new_book = []
+    # In case a book record is deleted, we can assign a duplicate inventory number if we use len(book_list) to determine
+    # the inventory number. Hence, we access the inventory number of the last record in the list with [-1] and we
+    # increment it by 1 to determine the inventory number. 
+    book_list.sort() # As the first step, we sort the book list by inventory number to get the right inventory number.
+    inv_number = book_list[-1][0] + 1
+    books = input("Please enter the book name: ")
+    author = input("Please enter the author of the book: ")
+    year = input("Please enter the year of the publication: ")
+    new_book.append(inv_number)
+    new_book.append(books)
+    new_book.append(author)
+    new_book.append(year)
+    book_list.append(new_book)
+    another()    
+
+def search_book(books):
+    search = input("Please enter the book name: ")
+    length = len(book_list)
+    for i in range(length):
+        if search.upper() == book_list[i][1].upper(): #Changing both to uppercase in case the user enters the book name in lowercase or uppercase
+            print("\nRecord found. Here are the details:\n")
+            print(f"{'Inv.No.' : ^4}\t\t{'Book Name' : <40}\t\t{'Author' : <20}\t\t{'Year of Pub.' : ^12}\t\t")
+            print(f"{books[i][0] : ^4}\t\t{books[i][1] : <40}\t\t{books[i][2] : <20}\t\t{books[i][3] : ^12}\t\t\n")
+            return_menu()
+            return
+    print("\nNo record found.\n")
+    return_menu()
+
+def search_author(books):
+    search = input("Please enter the author name: ")
+    length = len(book_list)
+    for i in range(length):
+        if search.upper() == book_list[i][2].upper():
+            print("\nRecord found. Here are the details:\n")
+            print(f"{'Inv.No.' : ^4}\t\t{'Book Name' : <40}\t\t{'Author' : <20}\t\t{'Year of Pub.' : ^12}\t\t")
+            print(f"{books[i][0] : ^4}\t\t{books[i][1] : <40}\t\t{books[i][2] : <20}\t\t{books[i][3] : ^12}\t\t\n")
+            return_menu()
+            return
+    print("\nNo record found.\n")
+    return_menu()
+
+def delete_record():
+    try:
+        delete = int(input("\nPlease enter the inventory number of the book that you'd like to delete or hit enter for main menu: "))
+    except:
+        clear()
+        menu()
+    length = len(book_list)
+    print(delete)
+    i = 0
+    found = False # A flag to avoid accidental deletion of the first record with index [0] in case no book record is found.
+    # Since our data structure is a two-dimensonal list, index() method will not work for us to get the inventory number easily. Instead,
+    # we will iterate through the book_list to see if there is a matching value in the first column [].
+    for n in range(length):
+        if book_list[n][0] == delete:
+            i = n
+            found = True
+    if found:
+        print("\nThe book you would like to delete:")
+        print(f"{'Inv.No.' : ^4}\t\t{'Book Name' : <40}\t\t{'Author' : <20}\t\t{'Year of Pub.' : ^12}\t\t")
+        print(f"{book_list[i][0] : ^4}\t\t{book_list[i][1] : <40}\t\t{book_list[i][2] : <20}\t\t{book_list[i][3] : ^12}\t\t")
+        def confirm():
+            confirm = input("\nAre you sure that you want to delete this book?(Y/N)")
+            if confirm.upper() != "Y" and confirm.upper() != "N":
+                print("Please enter a valid input.")
+                confirm()
+            elif confirm.upper() == "Y":
+                book_list.pop(i)
+                print("\nThe book has been deleted from the inventory.\n")
+                return_menu()
+            else:
+                return_menu()
+        confirm()
+    else:
+        print("\nNo book is found with the given inventory number.\n")
+        return_menu()
+
+def total_books(books):
+    # Calculates the total number of books and prints it to the screen.
+    total = len(books)
+    print(f"\nYou have a total of {total} books in your inventory.\n")
+    return_menu()
+
+def return_menu():
+    # Returns to the main menu after an operation
+    try:
+        input("Press enter to return to main menu\n")
+        clear()
+        menu()
+    except SyntaxError:
+        pass
+    return
+
+def clear(): 
+    # Clears the screen by printing new lines  
+         print("\n" * 120)  
+
+menu()
